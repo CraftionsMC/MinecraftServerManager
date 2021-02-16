@@ -24,7 +24,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClassPath>true</addClassPath>
+                            <addClasspath>true</addClasspath>
                             <mainClass>net.craftions.msm.client.main.Main</mainClass>
                         </manifest>
                     </archive>
