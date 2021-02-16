@@ -52,6 +52,7 @@ public class Server {
                             Boolean enable = false;
                             if(UserDB.users.containsKey(userName) && UserDB.users.get(userName).equals(pwd)){
                                 enable = true;
+                                w.println("welcome!");
                             }
                             while(s.hasNextLine() && enable){
                                 String rawCommand = Keys.decrypt(s.nextLine().getBytes(StandardCharsets.UTF_8), PRIVATE_KEY);
@@ -59,9 +60,9 @@ public class Server {
                                 String command = args[0];
                                 if(command.equals("get-msm-info")){
                                     if(args[1].equals("version")){
-                                        w.write(new String(Keys.encrypt("1.0", clientPubKey), StandardCharsets.UTF_8));
+                                        w.println(new String(Keys.encrypt("1.0", clientPubKey), StandardCharsets.UTF_8));
                                     }else if(args[1].equals("name")){
-                                        w.write(new String(Keys.encrypt("Standard-Server", clientPubKey), StandardCharsets.UTF_8));
+                                        w.println(new String(Keys.encrypt("Standard-Server", clientPubKey), StandardCharsets.UTF_8));
                                     }
                                 }else if(command.equals("close")){
                                     break;
