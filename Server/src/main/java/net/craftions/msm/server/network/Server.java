@@ -4,6 +4,7 @@
 package net.craftions.msm.server.network;
 
 import net.craftions.msm.api.rsa.Keys;
+import net.craftions.msm.server.user.UserDB;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,9 +43,17 @@ public class Server {
                             PrintWriter w = new PrintWriter(client.getOutputStream());
                             // send current public key
                             w.println(new String(PUBLIC_KEY.getEncoded()));
+                            // read client public key
                             String clientPubKeyRaw = s.nextLine();
                             PublicKey clientPubKey = Keys.fromString(clientPubKeyRaw);
-                            while(s.hasNextLine()){
+                            // check user credentials
+                            String userName = Keys.decrypt(s.nextLine().getBytes(), PRIVATE_KEY);
+                            String pwd = Keys.decrypt(s.nextLine().getBytes(), PRIVATE_KEY);
+                            Boolean enable = false;
+                            if(UserDB.users.containsKey(userName) && UserDB.users.get(userName).equals(pwd)){
+                                enable = true;
+                            }
+                            while(s.hasNextLine() && enable){
                                 String rawCommand = Keys.decrypt(s.nextLine().getBytes(StandardCharsets.UTF_8), PRIVATE_KEY);
                                 String[] args = rawCommand.split(" ");
                                 String command = args[0];
