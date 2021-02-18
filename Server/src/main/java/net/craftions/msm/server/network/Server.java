@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.util.Base64;
 import java.util.Scanner;
 
 public class Server {
@@ -40,34 +41,44 @@ public class Server {
                             needNewThread = true;
                             // initialize i/o streams
                             Scanner s = new Scanner(client.getInputStream());
-                            PrintWriter w = new PrintWriter(client.getOutputStream());
+                            PrintWriter w = new PrintWriter(client.getOutputStream(), true);
                             // send current public key
-                            w.println(new String(PUBLIC_KEY.getEncoded()));
+                            w.println(Base64.getEncoder().encodeToString(PUBLIC_KEY.getEncoded()));
                             // read client public key
                             String clientPubKeyRaw = s.nextLine();
                             PublicKey clientPubKey = Keys.fromString(clientPubKeyRaw);
                             // check user credentials
-                            String userName = Keys.decrypt(s.nextLine().getBytes(), PRIVATE_KEY);
-                            String pwd = Keys.decrypt(s.nextLine().getBytes(), PRIVATE_KEY);
+                            String userName = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
+                            String pwd = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
+                            System.out.println(userName);
+                            System.out.println(pwd);
                             Boolean enable = false;
-                            if(UserDB.users.containsKey(userName) && UserDB.users.get(userName).equals(pwd)){
+                            if(userName.equals("mctzock") && pwd.equals("81f175d0c002804ca5b8da150b79ab44")){
                                 enable = true;
+                                System.out.println("lol");
                                 w.println("welcome!");
+                                System.out.println("lol1");
+                            }else {
+                                System.out.println("lol0");
+                                w.println("failed");
                             }
                             while(s.hasNextLine() && enable){
-                                String rawCommand = Keys.decrypt(s.nextLine().getBytes(StandardCharsets.UTF_8), PRIVATE_KEY);
+                                System.out.println("Awaiting command...");
+                                String rawCommand = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
+                                System.out.println("Received command: " + rawCommand);
                                 String[] args = rawCommand.split(" ");
                                 String command = args[0];
                                 if(command.equals("get-msm-info")){
                                     if(args[1].equals("version")){
-                                        w.println(new String(Keys.encrypt("1.0", clientPubKey), StandardCharsets.UTF_8));
+                                        w.println(Base64.getEncoder().encodeToString(Keys.encrypt("1.0", clientPubKey)));
                                     }else if(args[1].equals("name")){
-                                        w.println(new String(Keys.encrypt("Standard-Server", clientPubKey), StandardCharsets.UTF_8));
+                                        w.println(Keys.encrypt(Base64.getEncoder().encodeToString("Standard-Server".getBytes()), clientPubKey));
                                     }
                                 }else if(command.equals("close")){
                                     break;
                                 }
                             }
+                            System.out.println("Closing connection");
                             // close streams and free memory
                             w.close();
                             s.close();
