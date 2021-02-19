@@ -55,11 +55,8 @@ public class Server {
                             Boolean enable = false;
                             if(userName.equals("mctzock") && pwd.equals("81f175d0c002804ca5b8da150b79ab44")){
                                 enable = true;
-                                System.out.println("lol");
                                 w.println("welcome!");
-                                System.out.println("lol1");
                             }else {
-                                System.out.println("lol0");
                                 w.println("failed");
                             }
                             while(s.hasNextLine() && enable){

@@ -21,34 +21,45 @@ public class Client {
     public static PrivateKey PRIVATE_KEY = null;
     public static PublicKey PUBLIC_KEY = null;
 
-    public static void create() throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        Socket socket = new Socket("localhost",40800);
-        Scanner s = new Scanner(socket.getInputStream());
-        PrintWriter w = new PrintWriter(socket.getOutputStream(), true);
+    public static Boolean accepted = false;
+
+    public static PrintWriter w = null;
+    public static Scanner s = null;
+    public static PublicKey serverPubKey = null;
+
+    public static void create(String host, int port, String username, String password) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        Socket socket = new Socket(host, port);
+        s = new Scanner(socket.getInputStream());
+        w = new PrintWriter(socket.getOutputStream(), true);
         String serverPubKeyRaw = s.nextLine();
-        PublicKey serverPubKey = Keys.fromString(serverPubKeyRaw);
+        serverPubKey = Keys.fromString(serverPubKeyRaw);
         w.println(Base64.getEncoder().encodeToString(PUBLIC_KEY.getEncoded()));
-        w.println(Base64.getEncoder().encodeToString(Keys.encrypt("mctzock", serverPubKey)));
-        w.println(Base64.getEncoder().encodeToString(Keys.encrypt("81f175d0c002804ca5b8da150b79ab44", serverPubKey)));
+        w.println(Base64.getEncoder().encodeToString(Keys.encrypt(username, serverPubKey)));
+        w.println(Base64.getEncoder().encodeToString(Keys.encrypt(password, serverPubKey)));
         Boolean en = false;
         String r = s.nextLine();
         if(r.equals("welcome!")){
             en = true;
         }
         if(en){
+            accepted = true;
             System.out.println("Accepted");
             w.println(Base64.getEncoder().encodeToString(Keys.encrypt("get-msm-info version", serverPubKey)));
-            r = s.nextLine();
-            System.out.println("Server-Version: " + Keys.decrypt(Base64.getDecoder().decode(r.getBytes()), PRIVATE_KEY));
+            r = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
+            System.out.println("Server-Version: " + r);
         }else {
             System.out.println("Denied: Wrong credentials");
             w.close();
             s.close();
             socket.close();
         }
-        System.out.println("Closing...");
-        w.close();
-        s.close();
-        socket.close();
+    }
+
+    public static String executeCommand(String msg) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        if(accepted){
+            w.println(Base64.getEncoder().encodeToString(Keys.encrypt(msg, serverPubKey)));
+            return Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
+        }
+        return "Connection closed.";
     }
 }

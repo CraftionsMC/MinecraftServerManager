@@ -4,6 +4,7 @@
 package net.craftions.msm.client.main;
 
 import net.craftions.msm.api.rsa.Keys;
+import net.craftions.msm.client.gui.Home;
 import net.craftions.msm.client.network.Client;
 
 import javax.crypto.BadPaddingException;
@@ -25,6 +26,7 @@ public class Main {
         KeyPair kp = Keys.gen(2048);
         Client.PRIVATE_KEY = kp.getPrivate();
         Client.PUBLIC_KEY = kp.getPublic();
-        Client.create();
+        Client.create("localhost", 40800, "mctzock", "81f175d0c002804ca5b8da150b79ab44");
+        // Home.show();
     }
 }
