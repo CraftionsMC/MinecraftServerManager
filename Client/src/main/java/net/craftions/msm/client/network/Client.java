@@ -27,7 +27,7 @@ public class Client {
     public static Scanner s = null;
     public static PublicKey serverPubKey = null;
 
-    public static void create(String host, int port, String username, String password) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public static Boolean create(String host, int port, String username, String password) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         Socket socket = new Socket(host, port);
         s = new Scanner(socket.getInputStream());
         w = new PrintWriter(socket.getOutputStream(), true);
@@ -47,11 +47,13 @@ public class Client {
             w.println(Base64.getEncoder().encodeToString(Keys.encrypt("get-msm-info version", serverPubKey)));
             r = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);
             System.out.println("Server-Version: " + r);
+            return true;
         }else {
             System.out.println("Denied: Wrong credentials");
             w.close();
             s.close();
             socket.close();
+            return false;
         }
     }
 

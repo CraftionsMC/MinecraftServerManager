@@ -21,6 +21,6 @@ public class Main {
         Server.PRIVATE_KEY = kp.getPrivate();
         Server.PUBLIC_KEY = kp.getPublic();
         // start server
-        Server.create();
+        Server.create(41530);
     }
 }

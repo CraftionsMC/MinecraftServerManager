@@ -24,8 +24,8 @@ public class Server {
     public static PublicKey PUBLIC_KEY = null;
     public static Boolean needNewThread = true;
 
-    public static void create() throws IOException {
-        ServerSocket server = new ServerSocket(40800);
+    public static void create(Integer port) throws IOException {
+        ServerSocket server = new ServerSocket(port);
         while(true) {
             if(needNewThread){
                 // threaded client listener
@@ -53,12 +53,21 @@ public class Server {
                             System.out.println(userName);
                             System.out.println(pwd);
                             Boolean enable = false;
+                            if(UserDB.users.containsKey(userName) && UserDB.users.get(userName).equals(pwd)){
+                                enable = true;
+                                w.println("welcome!");
+                            }else {
+                                w.println("failed");
+                            }
+                            /*
+                            !! OLD BACKUP !!
                             if(userName.equals("mctzock") && pwd.equals("81f175d0c002804ca5b8da150b79ab44")){
                                 enable = true;
                                 w.println("welcome!");
                             }else {
                                 w.println("failed");
                             }
+                             */
                             while(s.hasNextLine() && enable){
                                 System.out.println("Awaiting command...");
                                 String rawCommand = Keys.decrypt(Base64.getDecoder().decode(s.nextLine().getBytes()), PRIVATE_KEY);

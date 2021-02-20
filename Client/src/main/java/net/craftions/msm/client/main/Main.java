@@ -26,7 +26,7 @@ public class Main {
         KeyPair kp = Keys.gen(2048);
         Client.PRIVATE_KEY = kp.getPrivate();
         Client.PUBLIC_KEY = kp.getPublic();
-        Client.create("localhost", 40800, "mctzock", "81f175d0c002804ca5b8da150b79ab44");
-        // Home.show();
+        // Client.create("localhost", 40800, "mctzock", "81f175d0c002804ca5b8da150b79ab44");
+        Home.show();
     }
 }
