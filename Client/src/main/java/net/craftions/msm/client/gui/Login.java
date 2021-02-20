@@ -25,7 +25,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Home {
+public class Login {
 
     public static void show(){
         JFrame jf = new JFrame("MinecraftServerManager by Craftions.net | msm v1.0");
