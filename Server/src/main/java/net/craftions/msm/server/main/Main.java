@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
         // Sample user ** will be removed in the future **
-        UserDB.users.put("mctzock", "81f175d0c002804ca5b8da150b79ab44");
+        UserDB.users.put("mctzock", "0a98a2458ae79c6a59ec4275f1d399e6");
         // generate RSA keys
         KeyPair kp = Keys.gen(2048);
         Server.PRIVATE_KEY = kp.getPrivate();

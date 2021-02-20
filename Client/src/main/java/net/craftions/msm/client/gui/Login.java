@@ -7,28 +7,18 @@ import net.craftions.msm.client.gui.uielements.BasicButton;
 import net.craftions.msm.client.network.Client;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class Login {
 
+    protected static JFrame jf = new JFrame("MinecraftServerManager by Craftions.net | msm v1.0");
+
     public static void show(){
-        JFrame jf = new JFrame("MinecraftServerManager by Craftions.net | msm v1.0");
         JPanel content = new JPanel(null);
 
         JLabel productName = new JLabel("Minecraft Server Manager");
@@ -143,21 +133,7 @@ public class Login {
                 String port = portInput.getText();
                 String userName = userInput.getText();
                 String password = new String(passInput.getPassword());
-                if(!host.equals("") && !port.equals("") && !userName.equals("") && !password.equals("")){
-                    password = DigestUtils.md5Hex(password);
-                    System.out.println("Hashed password: " + password);
-                    try {
-                        if(Client.create(host, Integer.parseInt(port), userName, password)){
-                            JOptionPane.showMessageDialog(null, "Successfully connected to the server.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        }else {
-                            JOptionPane.showMessageDialog(null, "An error occurred. Maybe you have entered the wrong user credentials or the server is offline.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (Exception ex){
-                        JOptionPane.showMessageDialog(null, "An error occurred. Perhaps the server is offline.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }else {
-                    JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                login(host, port, userName, password);
             }
         });
 
@@ -180,5 +156,25 @@ public class Login {
         jf.setResizable(false);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.setVisible(true);
+    }
+
+    public static void login(String host, String port, String userName, String password){
+        if(!host.equals("") && !port.equals("") && !userName.equals("") && !password.equals("")){
+            password = DigestUtils.md5Hex(password);
+            System.out.println("Hashed password: " + password);
+            try {
+                if(Client.create(host, Integer.parseInt(port), userName, password)){
+                    jf.setVisible(false);
+                    Home.show();
+                    // JOptionPane.showMessageDialog(null, "Successfully connected to the server.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }else {
+                    JOptionPane.showMessageDialog(null, "An error occurred. Maybe you have entered the wrong user credentials or the server is offline.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex){
+                JOptionPane.showMessageDialog(null, "An error occurred. Perhaps the server is offline.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }else {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
