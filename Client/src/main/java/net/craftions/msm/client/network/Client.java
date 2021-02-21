@@ -23,12 +23,13 @@ public class Client {
 
     public static Boolean accepted = false;
 
+    public static Socket socket = null;
     public static PrintWriter w = null;
     public static Scanner s = null;
     public static PublicKey serverPubKey = null;
 
     public static Boolean create(String host, int port, String username, String password) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        Socket socket = new Socket(host, port);
+        socket = new Socket(host, port);
         s = new Scanner(socket.getInputStream());
         w = new PrintWriter(socket.getOutputStream(), true);
         String serverPubKeyRaw = s.nextLine();
@@ -55,6 +56,12 @@ public class Client {
             socket.close();
             return false;
         }
+    }
+
+    public static void disconnect() throws IOException {
+        s.close();
+        w.close();
+        socket.close();
     }
 
     public static String executeCommand(String msg) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {

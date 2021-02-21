@@ -82,6 +82,10 @@ public class Server {
                                     }
                                 }else if(command.equals("close")){
                                     break;
+                                }else if(command.equals("server")){
+                                    if(args[1].equals("list")){
+
+                                    }
                                 }
                             }
                             System.out.println("Closing connection");
